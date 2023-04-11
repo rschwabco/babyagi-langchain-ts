@@ -7,10 +7,9 @@ Based on the [LangChain](https://python.langchain.com/en/latest/index.html) [Pyt
 ## How to run
 
 1. Create an OpenAI and Pinecone accounts.
-2. Create a `babyagi` index in Pinecone
-3. Create a `.env` file based on the `.env.example` file and update your keys
-4. Run `npm install`
-5. Run `npm run local:watch`
+2. Create a `.env` file based on the `.env.example` file and update your keys
+3. Run `npm install`
+4. Run `npm run local:watch`
 
 ## TODO
 
