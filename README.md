@@ -1,6 +1,6 @@
 # BabyAGI with LangChain (Typescript) and Pinecone
 
-Based on [BabyAGI](https://github.com/yoheinakajima/babyagi/tree/main) by [Yohei Nakajima](https://twitter.com/yoheinakajima)
+Based on the [LangChain](https://python.langchain.com/en/latest/index.html) [Python implementation](https://python.langchain.com/en/latest/use_cases/agents/baby_agi.html?highlight=babyagi) of [BabyAGI](https://github.com/yoheinakajima/babyagi/tree/main) by [Yohei Nakajima](https://twitter.com/yoheinakajima)
 
 ## How to run
 
