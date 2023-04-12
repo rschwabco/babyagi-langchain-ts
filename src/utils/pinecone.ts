@@ -9,6 +9,7 @@ export const waitUntilIndexIsReady = async (client: PineconeClient, indexName: s
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore
     if (!indexDescription.status?.ready) {
+      process.stdout.write(".")
       await new Promise((r) => setTimeout(r, 1000));
       await waitUntilIndexIsReady(client, indexName)
     }
@@ -44,4 +45,25 @@ export const getPineconeClient: () => Promise<PineconeClient> = async () => {
     });
   }
   return pineconeClient
+}
+
+export const createIndexIfNotExists = async (client: PineconeClient, indexName: string) => {
+  try {
+    const indexList = await client.listIndexes()
+    if (!indexList.includes(indexName)) {
+      console.log("Creating index", indexName)
+      await client.createIndex({
+        createRequest: {
+          name: indexName,
+          dimension: 1536,
+        }
+      })
+      console.log("Waiting until index is ready...")
+      await waitUntilIndexIsReady(client, indexName)
+      console.log("Index is ready.")
+    }
+
+  } catch (e) {
+    console.error('Error creating index', e)
+  }
 }

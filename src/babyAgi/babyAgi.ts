@@ -92,11 +92,11 @@ class BabyAGI {
         this.printTaskResult(result);
 
         // Step 3: Store the result in the VectorStore
-        const result_id = `result_${task.taskId}`;
+        const resultId = `result_${task.taskId}`;
 
         const document: Document = {
           pageContent: result,
-          metadata: { task: task.taskName, resultId: result_id },
+          metadata: { task: task.taskName, resultId: resultId },
         }
 
         await this.vectorStore.addDocuments([document])

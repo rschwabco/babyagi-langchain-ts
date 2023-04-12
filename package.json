@@ -24,6 +24,7 @@
   "author": "Elson Correia @ Before Semicolon",
   "license": "MIT",
   "devDependencies": {
+    "@types/inquirer": "^9.0.3",
     "@types/jest": "^29.4.0",
     "@types/node": "^18.14.0",
     "@types/supertest": "^2.0.12",
@@ -44,6 +45,7 @@
   "dependencies": {
     "@pinecone-database/pinecone": "^0.0.12",
     "dotenv": "^16.0.3",
+    "inquirer": "^8.0.1",
     "langchain": "^0.0.53"
   }
 }
