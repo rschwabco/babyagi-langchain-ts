@@ -63,6 +63,7 @@ class BabyAGI {
     return [];
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   async execute(inputs: { [key: string]: any }): Promise<{ [key: string]: any }> {
     const objective = inputs['objective'];
     const firstTask = inputs['first_task'] || 'Make a todo list';
@@ -75,6 +76,7 @@ class BabyAGI {
         this.printTaskList();
 
         // Step 1: Pull the first task
+        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
         const task = this.taskList.shift()!;
         this.printNextTask(task);
 
@@ -86,7 +88,7 @@ class BabyAGI {
           task.taskName
         );
 
-        const this_task_id = task.taskId;
+        const currentTaskId = task.taskId;
         this.printTaskResult(result);
 
         // Step 3: Store the result in the VectorStore
@@ -99,8 +101,8 @@ class BabyAGI {
 
         await this.vectorStore.addDocuments([document])
 
-        // Step 4: Create new tasks and reprioritize task list
-        const new_tasks = await getNextTasks(
+        // Step 4: Create new tasks and re-prioritize task list
+        const newTasks = await getNextTasks(
           this.taskCreationChain,
           result,
           task.taskName,
@@ -108,15 +110,16 @@ class BabyAGI {
           objective
         );
 
-        for (const new_task of new_tasks) {
+        for (const newTask of newTasks) {
           this.taskIdCounter += 1;
-          new_task.taskId = this.taskIdCounter;
-          this.addTask(new_task);
+          newTask.taskId = this.taskIdCounter;
+          this.addTask(newTask);
         }
 
         this.taskList = await prioritizeTasks(
           this.taskPrioritizationChain,
-          this_task_id!,
+          // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+          currentTaskId!,
           this.taskList,
           objective
         )
