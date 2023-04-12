@@ -1,6 +1,6 @@
 {
-  "name": "node-typescript-project-template",
-  "version": "1.0.0",
+  "name": "babyagi-langchain-ts",
+  "version": "0.0.1",
   "description": "",
   "scripts": {
     "clean": "rimraf ./build",
