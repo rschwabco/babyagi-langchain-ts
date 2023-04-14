@@ -9,6 +9,12 @@ import { executeTask } from './tasks/getTopTasks';
 import { Task } from '../../types/task';
 import { Document } from "langchain/document";
 import chalk from 'chalk';
+import { BabyAgent } from './agents/agent';
+import { CustomAgent } from './agents/customeAgent';
+import { Calculator } from "langchain/tools/calculator";
+import { ZapierNLAWrapper } from "langchain/tools";
+import { ZapierToolKit } from 'langchain/agents';
+import { SerpAPI } from "langchain/tools";
 
 class BabyAGI {
   private taskList: Task[];
@@ -18,7 +24,7 @@ class BabyAGI {
   private taskIdCounter: number;
   private vectorStore: VectorStore;
   private maxIterations: number | null;
-
+  private llm: BaseLLM
   constructor(
     llm: BaseLLM,
     verbose = true,
@@ -26,6 +32,7 @@ class BabyAGI {
     maxIterations: number | null = null
   ) {
     this.taskList = [];
+    this.llm = llm
     this.taskCreationChain = TaskCreationChain.fromLLM(llm, verbose)
     this.taskPrioritizationChain = TaskPrioritizationChain.fromLLM(llm, verbose)
     this.executionChain = ExecutionChain.fromLLM(llm, verbose)
@@ -66,7 +73,7 @@ class BabyAGI {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   async execute(inputs: { [key: string]: any }): Promise<{ [key: string]: any }> {
     const objective = inputs['objective'];
-    const firstTask = inputs['first_task'] || 'Make a todo list';
+    const firstTask = inputs['first_task'] || `Make a todo list to figure out how to accomplish the OBJECTIVE ${objective}}`;
     this.addTask({ taskId: 1, taskName: firstTask });
     let numIters = 0;
     // eslint-disable-next-line no-constant-condition
@@ -80,12 +87,19 @@ class BabyAGI {
         const task = this.taskList.shift()!;
         this.printNextTask(task);
 
+        const zapier = new ZapierNLAWrapper();
+        const toolkit = await ZapierToolKit.fromZapierNLAWrapper(zapier);
+
+        const customAgent = await CustomAgent.fromLLM(this.llm, false, [new Calculator(), ...toolkit.tools, new SerpAPI()])
+
         // Step 2: Execute the task
         const result = await executeTask(
           this.vectorStore,
           this.executionChain,
           objective,
-          task.taskName
+          task.taskName,
+          5,
+          customAgent
         );
 
         const currentTaskId = task.taskId;
@@ -98,6 +112,8 @@ class BabyAGI {
           pageContent: result,
           metadata: { task: task.taskName, resultId: resultId },
         }
+
+        console.log(document)
 
         await this.vectorStore.addDocuments([document])
 

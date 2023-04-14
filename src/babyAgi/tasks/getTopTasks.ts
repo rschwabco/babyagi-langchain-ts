@@ -1,5 +1,7 @@
 import { LLMChain } from "langchain";
 import { VectorStore } from "langchain/vectorstores/base";
+import { BabyAgent } from "../agents/agent";
+import { CustomAgent } from "../agents/customeAgent";
 
 interface VectorStoreItem {
   metadata: {
@@ -34,10 +36,14 @@ async function executeTask(
   executionChain: LLMChain,
   objective: string,
   task: string,
-  k = 5
+  k = 5,
+  executionAgent?: CustomAgent,
 ): Promise<string> {
   // Execute a task.
   const context: string[] = await getTopTasks(vectorStore, objective, k);
+  if (executionAgent) {
+    return await executionAgent.execute(task, objective, context)
+  }
   const result = await executionChain.call({
     objective: objective,
     context: context,
